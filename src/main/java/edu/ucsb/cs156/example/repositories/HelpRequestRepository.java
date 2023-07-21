@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface HelpRequestRepository extends CrudRepository<UCSBDate, Long> {
+public interface HelpRequestRepository extends CrudRepository<HelpRequest, Long> {
   Iterable<HelpRequest> findAllByRequester(String requester);
   Iterable<HelpRequest> findAllByDate(LocalDate requestDate);
 }
