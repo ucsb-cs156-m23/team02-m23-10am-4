@@ -2,7 +2,6 @@ package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.entities.Articles;
 
-import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.ArticlesRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,16 +49,16 @@ public class ArticlesController extends ApiController{
         @Parameter(name="url") @RequestParam String url,
         @Parameter(name="explanation") @RequestParam String explanation,
         @Parameter(name="email") @RequestParam String email,
-        @Parameter(name="date") @RequestParam("dateAdded") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime dateAdded) 
+        @Parameter(name="date") @RequestParam("dateAdded")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime) 
         throws JsonProcessingException{
-            log.info("dateAdded: " + dateAdded);
+            log.info("dateAdded={} ", localDateTime);
             
             Articles article = new Articles();
             article.setTitle(title);
             article.setUrl(url);
             article.setExplanation(explanation);
             article.setEmail(email);
-            article.setDateAdded(dateAdded);
+            article.setDateAdded(localDateTime);
 
             Articles savedArticle = articlesRepository.save(article);
 
