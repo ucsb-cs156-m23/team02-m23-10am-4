@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HelpRequestRepository extends CrudRepository<HelpRequest, Long> {
-  Iterable<HelpRequest> findAllByRequester(String requester);
-  Iterable<HelpRequest> findAllByDate(LocalDate requestDate);
+  // Iterable<HelpRequest> findAllByRequester(String requester);
+  // Iterable<HelpRequest> findAllByDate(LocalDate requestDate);
 }
