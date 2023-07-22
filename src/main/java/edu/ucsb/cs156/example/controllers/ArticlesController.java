@@ -44,12 +44,12 @@ public class ArticlesController extends ApiController{
     @Operation(summary= "Create a new Article")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
-    public Articles createArticle(
+    public Articles postArticle(
         @Parameter(name="title") @RequestParam String title,
         @Parameter(name="url") @RequestParam String url,
         @Parameter(name="explanation") @RequestParam String explanation,
         @Parameter(name="email") @RequestParam String email,
-        @Parameter(name="date") @RequestParam("dateAdded")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime) 
+        @Parameter(name="date") @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime) 
         throws JsonProcessingException{
             log.info("dateAdded={} ", localDateTime);
             

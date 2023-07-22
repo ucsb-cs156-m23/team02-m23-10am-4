@@ -22,6 +22,7 @@ public class Articles {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long Id;
+  
   private String title;
   private String url;
   private String explanation;
