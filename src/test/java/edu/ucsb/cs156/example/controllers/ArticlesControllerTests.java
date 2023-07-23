@@ -173,7 +173,7 @@ public class ArticlesControllerTests extends ControllerTestCase{
 
         when(articlesRepository.save(any(Articles.class))).thenReturn(article1);
 
-        MvcResult response = mockMvc.perform(post("/api/articles/post?title=testarticle1&url=url1.test&explanation=testexplanation1&email=tesmail1@ucsb.edu&date=2022-01-03T00:00:00").with(csrf())).andExpect(status().isOk()).andReturn();
+        MvcResult response = mockMvc.perform(post("/api/articles/post?title=testarticle1&url=url1.test&explanation=testexplanation1&email=tesmail1@ucsb.edu&dateAdded=2022-01-03T00:00:00").with(csrf())).andExpect(status().isOk()).andReturn();
 
         verify(articlesRepository, times(1)).save(article1);
         String expectedJSON = mapper.writeValueAsString(article1);
