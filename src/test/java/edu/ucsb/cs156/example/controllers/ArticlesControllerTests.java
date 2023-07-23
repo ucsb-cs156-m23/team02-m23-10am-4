@@ -51,6 +51,12 @@ public class ArticlesControllerTests extends ControllerTestCase{
             .andExpect(status().is(403));
     }
 
+    @Test
+    public void logged_out_users_cannot_get_by_id() throws Exception {
+        mockMvc.perform(get("/api/articles?id=1"))
+            .andExpect(status().is(403));
+    }
+
     @WithMockUser(roles = {"USER"})
     @Test
     public void logged_in_users_can_get_all() throws Exception {
@@ -70,6 +76,48 @@ public class ArticlesControllerTests extends ControllerTestCase{
         mockMvc.perform(post("/api/articles/post"))
             .andExpect(status().is(403));
     }
+
+    @WithMockUser(roles = {"USER"})
+    @Test
+    public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+
+        LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+        Articles article1 = Articles.builder()
+        .title("test article 1")
+        .url("url1.test")
+        .explanation("test explanation 1")
+        .email("tesmail1@ucsb.edu")
+        .dateAdded(ldt1)
+        .build();
+
+        when(articlesRepository.findById(eq(1L))).thenReturn(Optional.of(article1));
+
+        MvcResult response = mockMvc.perform(get("/api/articles?id=1"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        verify(articlesRepository, times(1)).findById(eq(1L));
+        String expectedJSON = mapper.writeValueAsString(article1);
+        String responseJSON = response.getResponse().getContentAsString();
+        assertEquals(expectedJSON, responseJSON);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+        when(articlesRepository.findById(eq(1L))).thenReturn(Optional.empty());
+
+        MvcResult response = mockMvc.perform(get("/api/articles?id=1"))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+        verify(articlesRepository, times(1)).findById(eq(1L));
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("EntityNotFoundException", json.get("type"));
+        assertEquals("Articles with id 1 not found", json.get("message"));
+    }
+
 
     @WithMockUser(roles = {"USER"})
     @Test
