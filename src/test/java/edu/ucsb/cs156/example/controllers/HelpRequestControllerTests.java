@@ -5,6 +5,7 @@ import edu.ucsb.cs156.example.repositories.HelpRequestRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
 import edu.ucsb.cs156.example.ControllerTestCase;
 import edu.ucsb.cs156.example.entities.HelpRequest;
+import edu.ucsb.cs156.example.entities.UCSBDiningCommons;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -117,7 +119,7 @@ public class HelpRequestControllerTests extends ControllerTestCase{
 
     @WithMockUser(roles = { "USER" })
     @Test
-    public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+    public void test_that_logged_in_user_cannot_get_by_id_when_the_id_does_not_exist() throws Exception {
         when(requestRepository.findById(eq(1L))).thenReturn(Optional.empty());
 
         MvcResult response = mockMvc.perform(get("/api/helprequest?id=1"))
@@ -188,6 +190,56 @@ public class HelpRequestControllerTests extends ControllerTestCase{
         String expectedJSON = mapper.writeValueAsString(request1);
         String responseJSON = response.getResponse().getContentAsString();
         assertEquals(expectedJSON, responseJSON);
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_can_delete_a_request() throws Exception {
+    
+        //arrange
+        LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+        HelpRequest request1 = HelpRequest.builder()
+        .title("test request 1")
+        .requester("someuser")
+        .requestBody("test body 1")
+        .requestDateTime(ldt1)
+        .build();
+
+        when(requestRepository.findById(eq(1L))).thenReturn(Optional.of(request1));
+
+        // act
+        MvcResult response = mockMvc.perform(
+                        delete("/api/helprequest?id=1")
+                                        .with(csrf()))
+                        .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(requestRepository, times(1)).findById(1L);
+        verify(requestRepository, times(1)).delete(any());
+
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("HelpRequest with id 1 deleted", json.get("message"));
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_tries_to_delete_non_existant_request_and_gets_right_error_message()
+                    throws Exception {
+        // arrange
+
+        when(requestRepository.findById(eq(123L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                        delete("/api/helprequest?id=123")
+                                        .with(csrf()))
+                        .andExpect(status().isNotFound()).andReturn();
+
+        // assert
+        verify(requestRepository, times(1)).findById(123L);
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("HelpRequest with id 123 not found", json.get("message"));
     }
 
     @WithMockUser(roles = { "ADMIN", "USER" })
