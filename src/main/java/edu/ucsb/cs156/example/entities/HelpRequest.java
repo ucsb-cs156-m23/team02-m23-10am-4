@@ -1,6 +1,6 @@
 package edu.ucsb.cs156.example.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GenerationType;
@@ -23,7 +23,7 @@ public class HelpRequest {
   private long id;
 
   private String title;
-  private LocalDate requestDateTime;
+  private LocalDateTime requestDateTime;
   private String requester;  
   private String requestBody;  
 }
