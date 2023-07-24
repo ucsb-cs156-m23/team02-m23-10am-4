@@ -1,6 +1,6 @@
 # team02-m23-10am-4
 
-Instructions: <https://ucsb-cs156.github.io/m23/lab/team02-m23-10am-4.html>
+Instructions: <https://ucsb-cs156.github.io/m23/lab/team02.html>
 
 Deployments:
 
