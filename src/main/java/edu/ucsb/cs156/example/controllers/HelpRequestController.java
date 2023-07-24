@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.entities.HelpRequest;
+import edu.ucsb.cs156.example.entities.UCSBDiningCommons;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.HelpRequestRepository;
 
@@ -80,6 +81,18 @@ public class HelpRequestController extends ApiController{
 
             return savedArticle;
         }
+
+    @Operation(summary= "Delete a help request")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteCommons(
+            @Parameter(name="id") @RequestParam Long id) {
+        HelpRequest commons = requestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
+
+        requestRepository.delete(commons);
+        return genericMessage("HelpRequest with id %d deleted".formatted(id));
+    }
 
     @Operation(summary= "Update an existing help request")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
