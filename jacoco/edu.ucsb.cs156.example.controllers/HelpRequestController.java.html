@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HelpRequestController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">team02</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.example.controllers</a> &gt; <span class="el_source">HelpRequestController.java</span></div><h1>HelpRequestController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.entities.HelpRequest;
+import edu.ucsb.cs156.example.entities.UCSBDiningCommons;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.HelpRequestRepository;
 
@@ -31,8 +32,8 @@ import javax.validation.Valid;
 @Tag(name = &quot;HelpRequest&quot;)
 @RequestMapping(&quot;/api/helprequest&quot;)
 @RestController
-<span class="fc" id="L34">@Slf4j</span>
-<span class="fc" id="L35">public class HelpRequestController extends ApiController{</span>
+<span class="fc" id="L35">@Slf4j</span>
+<span class="fc" id="L36">public class HelpRequestController extends ApiController{</span>
     
     @Autowired
     HelpRequestRepository requestRepository;
@@ -41,8 +42,8 @@ import javax.validation.Valid;
     @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
     @GetMapping(&quot;/all&quot;)
     public Iterable&lt;HelpRequest&gt; allHelpRequest() {
-<span class="fc" id="L44">        Iterable&lt;HelpRequest&gt; helpRequest = requestRepository.findAll();</span>
-<span class="fc" id="L45">        return helpRequest;</span>
+<span class="fc" id="L45">        Iterable&lt;HelpRequest&gt; helpRequest = requestRepository.findAll();</span>
+<span class="fc" id="L46">        return helpRequest;</span>
     }
 
     @Operation(summary= &quot;Get a single help request&quot;)
@@ -50,10 +51,10 @@ import javax.validation.Valid;
     @GetMapping(&quot;&quot;)
     public HelpRequest getById(
             @Parameter(name=&quot;id&quot;) @RequestParam Long id) {
-<span class="fc" id="L53">        HelpRequest request = requestRepository.findById(id)</span>
-<span class="fc" id="L54">                .orElseThrow(() -&gt; new EntityNotFoundException(HelpRequest.class, id));</span>
+<span class="fc" id="L54">        HelpRequest request = requestRepository.findById(id)</span>
+<span class="fc" id="L55">                .orElseThrow(() -&gt; new EntityNotFoundException(HelpRequest.class, id));</span>
 
-<span class="fc" id="L56">        return request;</span>
+<span class="fc" id="L57">        return request;</span>
     }
 
 
@@ -68,18 +69,30 @@ import javax.validation.Valid;
         @Parameter(name=&quot;requestDateTime&quot;) @RequestParam(&quot;requestDateTime&quot;) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime requestDateTime) 
         
         throws JsonProcessingException{
-<span class="fc" id="L71">            log.info(&quot;requestDateTime={} &quot;, requestDateTime);</span>
+<span class="fc" id="L72">            log.info(&quot;requestDateTime={} &quot;, requestDateTime);</span>
             
-<span class="fc" id="L73">            HelpRequest request = new HelpRequest();</span>
-<span class="fc" id="L74">            request.setTitle(title);</span>
-<span class="fc" id="L75">            request.setRequester(requester);</span>
-<span class="fc" id="L76">            request.setRequestBody(requestBody);</span>
-<span class="fc" id="L77">            request.setRequestDateTime(requestDateTime);</span>
+<span class="fc" id="L74">            HelpRequest request = new HelpRequest();</span>
+<span class="fc" id="L75">            request.setTitle(title);</span>
+<span class="fc" id="L76">            request.setRequester(requester);</span>
+<span class="fc" id="L77">            request.setRequestBody(requestBody);</span>
+<span class="fc" id="L78">            request.setRequestDateTime(requestDateTime);</span>
 
-<span class="fc" id="L79">            HelpRequest savedArticle = requestRepository.save(request);</span>
+<span class="fc" id="L80">            HelpRequest savedArticle = requestRepository.save(request);</span>
 
-<span class="fc" id="L81">            return savedArticle;</span>
+<span class="fc" id="L82">            return savedArticle;</span>
         }
+
+    @Operation(summary= &quot;Delete a help request&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @DeleteMapping(&quot;&quot;)
+    public Object deleteCommons(
+            @Parameter(name=&quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L90">        HelpRequest commons = requestRepository.findById(id)</span>
+<span class="fc" id="L91">                .orElseThrow(() -&gt; new EntityNotFoundException(HelpRequest.class, id));</span>
+
+<span class="fc" id="L93">        requestRepository.delete(commons);</span>
+<span class="fc" id="L94">        return genericMessage(&quot;HelpRequest with id %d deleted&quot;.formatted(id));</span>
+    }
 
     @Operation(summary= &quot;Update an existing help request&quot;)
     @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
@@ -87,19 +100,19 @@ import javax.validation.Valid;
     public HelpRequest updateHelpRequest(
             @Parameter(name=&quot;id&quot;) @RequestParam Long id,
             @RequestBody @Valid HelpRequest incoming) {
-<span class="fc" id="L90">        log.info(&quot;incoming={}&quot;, incoming);</span>
-<span class="fc" id="L91">        log.info(&quot;id={}&quot;, id);  </span>
-<span class="fc" id="L92">        HelpRequest request = requestRepository.findById(id)</span>
-<span class="fc" id="L93">                .orElseThrow(() -&gt; new EntityNotFoundException(HelpRequest.class, id));</span>
+<span class="fc" id="L103">        log.info(&quot;incoming={}&quot;, incoming);</span>
+<span class="fc" id="L104">        log.info(&quot;id={}&quot;, id);  </span>
+<span class="fc" id="L105">        HelpRequest request = requestRepository.findById(id)</span>
+<span class="fc" id="L106">                .orElseThrow(() -&gt; new EntityNotFoundException(HelpRequest.class, id));</span>
         
-<span class="fc" id="L95">        request.setTitle(incoming.getTitle());</span>
-<span class="fc" id="L96">        request.setRequester(incoming.getRequester());</span>
-<span class="fc" id="L97">        request.setRequestBody(incoming.getRequestBody());</span>
-<span class="fc" id="L98">        request.setRequestDateTime(incoming.getRequestDateTime());</span>
+<span class="fc" id="L108">        request.setTitle(incoming.getTitle());</span>
+<span class="fc" id="L109">        request.setRequester(incoming.getRequester());</span>
+<span class="fc" id="L110">        request.setRequestBody(incoming.getRequestBody());</span>
+<span class="fc" id="L111">        request.setRequestDateTime(incoming.getRequestDateTime());</span>
 
-<span class="fc" id="L100">        requestRepository.save(request);</span>
+<span class="fc" id="L113">        requestRepository.save(request);</span>
 
-<span class="fc" id="L102">        return request;</span>
+<span class="fc" id="L115">        return request;</span>
     }
     
 }
