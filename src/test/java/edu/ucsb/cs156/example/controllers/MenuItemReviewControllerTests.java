@@ -137,4 +137,53 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
             assertEquals(expectedJson, responseString);
         }
 
+        @Test
+        public void logged_out_users_cannot_get_by_id() throws Exception {
+            mockMvc.perform(get("/api/menuitemreview?id=1"))
+                .andExpect(status().isForbidden());
+        }
+
+        @WithMockUser(roles = {"USER"})
+        @Test
+        public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+            // arrange
+            MenuItemReview menuItemReview = MenuItemReview.builder()
+                .itemId(1L)
+                .reviewerEmail("test@ucsb.edu")
+                .stars(5)
+                .dateReviewed(LocalDateTime.of(2021, 5, 1, 12, 0, 0))
+                .comments("This is a test")
+                .build();
+
+            when(menuItemReviewRepository.findById(1L)).thenReturn(Optional.of(menuItemReview));
+
+            // act
+            MvcResult response = mockMvc.perform(get("/api/menuitemreview?id=1"))
+                .andExpect(status().isOk()).andReturn();
+
+            // assert
+
+            verify(menuItemReviewRepository, times(1)).findById(1L);
+            String expectedJson = mapper.writeValueAsString(menuItemReview);
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals(expectedJson, responseString);
+        }
+
+        @WithMockUser(roles = {"USER"})
+        @Test
+        public void test_that_logged_in_user_cannot_get_by_id_when_the_id_does_not_exist() throws Exception {
+            // arrange
+            when(menuItemReviewRepository.findById(1L)).thenReturn(Optional.empty());
+
+            // act
+            MvcResult response = mockMvc.perform(get("/api/menuitemreview?id=1"))
+                .andExpect(status().isNotFound()).andReturn();
+
+            // assert
+            verify(menuItemReviewRepository, times(1)).findById(1L);
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("EntityNotFoundException", json.get("type"));
+            assertEquals("MenuItemReview with id 1 not found", json.get("message"));
+        }
+
 }
