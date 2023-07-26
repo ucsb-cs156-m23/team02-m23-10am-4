@@ -64,8 +64,6 @@ public class MenuItemReviewController extends ApiController {
             .comments(comments)
             .build();
         
-        menuItemReviewRepository.save(menuItemReview);
-
-        return menuItemReview;
+        return menuItemReviewRepository.save(menuItemReview);
     }
 }
