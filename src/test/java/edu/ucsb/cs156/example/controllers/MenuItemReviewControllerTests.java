@@ -54,7 +54,7 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = {"USER"})
         @Test
-        public void logged_in_users_can_get_all_menu_item_reviews() throws Exception {
+        public void logged_in_users_can_get_all() throws Exception {
             mockMvc.perform(get("/api/MenuItemReview/all"))
                 .andExpect(status().isOk());
         }
@@ -70,6 +70,44 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
         public void logged_in_regular_users_cannot_post() throws Exception {
             mockMvc.perform(post("/api/MenuItemReview/post"))
                 .andExpect(status().isForbidden());
+        }
+
+        @WithMockUser(roles = {"USER"})
+        @Test
+        public void logged_in_user_can_get_all_menu_item_reviews() throws Exception {
+            // arrange
+
+            MenuItemReview review1 = MenuItemReview.builder()
+                .itemId(1L)
+                .reviewerEmail("test1@ucsb.edu")
+                .stars(5)
+                .dateReviewed(LocalDateTime.of(2021, 5, 1, 12, 0, 0))
+                .comments("This is a test 1")
+                .build();
+
+            MenuItemReview review2 = MenuItemReview.builder()
+                .itemId(2L)
+                .reviewerEmail("test2@ucsb.edu")
+                .stars(4)
+                .dateReviewed(LocalDateTime.of(2021, 5, 2, 12, 0, 0))
+                .comments("This is a test 2")
+                .build();
+
+                ArrayList<MenuItemReview> reviews = new ArrayList<MenuItemReview>();
+                reviews.add(review1);
+                reviews.add(review2);
+
+            when(menuItemReviewRepository.findAll()).thenReturn(reviews);
+
+            // act
+            MvcResult response = mockMvc.perform(get("/api/MenuItemReview/all"))
+                .andExpect(status().isOk()).andReturn();
+
+            // assert
+            verify(menuItemReviewRepository, times(1)).findAll();
+            String expectedJson = mapper.writeValueAsString(reviews);
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals(expectedJson, responseString);
         }
 
         @WithMockUser(roles = {"ADMIN", "USER"})
