@@ -75,6 +75,19 @@ public class ArticlesControllerTests extends ControllerTestCase{
             .andExpect(status().is(403));
     }
 
+    @Test
+    public void logged_out_users_cannot_delete() throws Exception {
+        mockMvc.perform(delete("/api/articles"))
+            .andExpect(status().is(403));
+    }
+
+    @WithMockUser(roles = {"USER"})
+    @Test
+    public void logged_in_regular_users_cannot_delete() throws Exception {
+        mockMvc.perform(delete("/api/articles"))
+            .andExpect(status().is(403));
+    }
+
     @WithMockUser(roles = {"USER"})
     @Test
     public void logged_in_regular_users_cannot_put() throws Exception {
@@ -261,6 +274,49 @@ public class ArticlesControllerTests extends ControllerTestCase{
             .andExpect(status().isNotFound()).andReturn();
 
         verify(articlesRepository, times(1)).findById(eq(1L));
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("Articles with id 1 not found", json.get("message"));
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_can_delete_a_article() throws Exception{
+        LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+        Articles article1 = Articles.builder()
+        .title("test article 1")
+        .url("url1.test")
+        .explanation("test explanation 1")
+        .email("tesmail1@ucsb.edu")
+        .dateAdded(ldt1)
+        .build();
+
+        when(articlesRepository.findById(eq(1L))).thenReturn(Optional.of(article1));
+
+        MvcResult response = mockMvc.perform(
+            delete("/api/articles?id=1")
+            .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+
+        verify(articlesRepository, times(1)).findById(eq(1L));
+        verify(articlesRepository, times(1)).delete(any());
+
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("Article with id 1 deleted", json.get("message"));
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_tries_to_delete_non_existant_article_and_gets_right_error_message() throws Exception{
+
+        when(articlesRepository.findById(eq(1L))).thenReturn(Optional.empty());
+
+        MvcResult response = mockMvc.perform(
+            delete("/api/articles?id=1")
+            .with(csrf()))
+            .andExpect(status().isNotFound()).andReturn();
+
+        verify(articlesRepository, times(1)).findById(1L);
         Map<String, Object> json = responseToJson(response);
         assertEquals("Articles with id 1 not found", json.get("message"));
     }
