@@ -95,6 +95,8 @@ public class MenuItemReviewController extends ApiController {
         existingMenuItemReview.setDateReviewed(menuItemReview.getDateReviewed());
         existingMenuItemReview.setComments(menuItemReview.getComments());
 
-        return menuItemReviewRepository.save(existingMenuItemReview);
+        menuItemReviewRepository.save(existingMenuItemReview);
+
+        return existingMenuItemReview;
     }
 }
