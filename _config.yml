@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-m23/team02-m23-10am-4
 owner: ucsb-cs156-m23
 repo_name: team02-m23-10am-4
-pull_requests: [{"author":{"id":"MDQ6VXNlcjU2MDYwNjY0","is_bot":false,"login":"publicqi","name":""},"headRefName":"Qi-MenuItemReviewPut","number":50,"title":"qs - add controller and tests for PUT (update) endpoints","url":"https://github.com/ucsb-cs156-m23/team02-m23-10am-4/pull/50"}]
+pull_requests: [{"author":{"id":"MDQ6VXNlcjU2MDYwNjY0","is_bot":false,"login":"publicqi","name":""},"headRefName":"Qi-MenuItemReviewDelete","number":51,"title":"qs - add controller and tests for DELETE (delete) endpoints","url":"https://github.com/ucsb-cs156-m23/team02-m23-10am-4/pull/51"},{"author":{"id":"MDQ6VXNlcjU2MDYwNjY0","is_bot":false,"login":"publicqi","name":""},"headRefName":"Qi-MenuItemReviewPut","number":50,"title":"qs - add controller and tests for PUT (update) endpoints","url":"https://github.com/ucsb-cs156-m23/team02-m23-10am-4/pull/50"}]
