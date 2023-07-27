@@ -78,5 +78,39 @@ import javax.validation.Valid;
 
 <span class="fc" id="L79">        return menuItemReview;</span>
     }
+
+    @Operation(summary = &quot;Update a single menu item review&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PutMapping(&quot;&quot;)
+    public MenuItemReview updatMenuItemReview(
+        @Parameter(name=&quot;id&quot;) @RequestParam Long id,
+        @RequestBody @Valid MenuItemReview menuItemReview
+    ) {
+<span class="fc" id="L89">        MenuItemReview existingMenuItemReview = menuItemReviewRepository.findById(id)</span>
+<span class="fc" id="L90">            .orElseThrow(() -&gt; new EntityNotFoundException(MenuItemReview.class, id));</span>
+
+<span class="fc" id="L92">        existingMenuItemReview.setItemId(menuItemReview.getItemId());</span>
+<span class="fc" id="L93">        existingMenuItemReview.setReviewerEmail(menuItemReview.getReviewerEmail());</span>
+<span class="fc" id="L94">        existingMenuItemReview.setStars(menuItemReview.getStars());</span>
+<span class="fc" id="L95">        existingMenuItemReview.setDateReviewed(menuItemReview.getDateReviewed());</span>
+<span class="fc" id="L96">        existingMenuItemReview.setComments(menuItemReview.getComments());</span>
+
+<span class="fc" id="L98">        menuItemReviewRepository.save(existingMenuItemReview);</span>
+
+<span class="fc" id="L100">        return existingMenuItemReview;</span>
+    }
+
+    @Operation(summary = &quot;Delete a menu item review&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @DeleteMapping(&quot;&quot;)
+    public Object deleteMenuItemReview(
+        @Parameter(name=&quot;id&quot;) @RequestParam Long id
+    ) {
+<span class="fc" id="L109">        MenuItemReview menuItemReview = menuItemReviewRepository.findById(id)</span>
+<span class="fc" id="L110">            .orElseThrow(() -&gt; new EntityNotFoundException(MenuItemReview.class, id));</span>
+
+<span class="fc" id="L112">        menuItemReviewRepository.delete(menuItemReview);</span>
+<span class="fc" id="L113">        return genericMessage(&quot;MenuItemReview with id %s deleted&quot;.formatted(id));</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
