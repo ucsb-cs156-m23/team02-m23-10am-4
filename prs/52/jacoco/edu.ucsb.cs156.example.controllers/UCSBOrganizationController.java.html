@@ -91,7 +91,7 @@ import javax.validation.Valid;
 <span class="fc" id="L91">        UCSBOrganization ucsborg = uCSBOrganizationRepository.findById(orgCode)</span>
 <span class="fc" id="L92">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBOrganization.class, orgCode));</span>
 
-<span class="fc" id="L94">        ucsborg.setOrgCode(incoming.getOrgCode());</span>
+        //ucsborg.setOrgCode(incoming.getOrgCode());
 <span class="fc" id="L95">        ucsborg.setOrgTranslationShort(incoming.getOrgTranslationShort());</span>
 <span class="fc" id="L96">        ucsborg.setOrgTranslation(incoming.getOrgTranslation());</span>
 <span class="fc" id="L97">        ucsborg.setInactive(incoming.getInactive());</span>
