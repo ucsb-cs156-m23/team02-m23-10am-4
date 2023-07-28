@@ -23,7 +23,7 @@ public class MenuItemReview {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long Id;
 
-  private Long itemId;  // the id in the UCSBDiningCommonsMenuItem table of a menu item
+  private long itemId;  // the id in the UCSBDiningCommonsMenuItem table of a menu item
   private String reviewerEmail;
   private int stars;  // 0 to 5 stars
   private LocalDateTime dateReviewed;
