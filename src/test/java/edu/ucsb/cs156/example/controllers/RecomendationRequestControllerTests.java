@@ -315,7 +315,7 @@ public class RecomendationRequestControllerTests extends ControllerTestCase{
         verify(recommendationRequestRepository, times(1)).delete(any());
 
         Map<String, Object> json = responseToJson(response);
-        assertEquals("UCSBDate with id 15 deleted", json.get("message"));
+        assertEquals("RecommendationRequest with id 15 deleted", json.get("message"));
 
     }
 
