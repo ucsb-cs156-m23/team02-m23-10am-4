@@ -2,10 +2,8 @@ package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
-import lombok.With;
 import edu.ucsb.cs156.example.ControllerTestCase;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
-import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 
 import java.util.ArrayList;
