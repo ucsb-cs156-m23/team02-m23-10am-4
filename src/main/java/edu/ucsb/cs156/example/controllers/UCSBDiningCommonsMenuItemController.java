@@ -62,7 +62,7 @@ public class UCSBDiningCommonsMenuItemController extends ApiController{
         @Parameter(name="itemId") @RequestParam long itemId,
         @Parameter(name="reviewerEmail") @RequestParam String reviewerEmail,
         @Parameter(name="stars") @RequestParam int stars,
-        @Parameter(name="dateReviewed") @RequestParam("dateAdded") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateReviewed,
+        @Parameter(name="dateReviewed") @RequestParam("dateReviewed") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateReviewed,
         @Parameter(name="comments") @RequestParam String comments) 
         throws JsonProcessingException {
 
