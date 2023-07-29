@@ -203,5 +203,87 @@ public class RecomendationRequestControllerTests extends ControllerTestCase{
 
     }
 
+    // Tests for PUT
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+
+            LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+            LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
+
+            RecommendationRequest Oreq = RecommendationRequest.builder()
+                            .requesterEmail("test1@")
+                            .professorEmail("test2@")
+                            .explanation("testexplanation")
+                            .dateRequested(ldt1)
+                            .dateNeeded(ldt1)
+                            .done(false)
+                            .build();
+            RecommendationRequest Ereq = RecommendationRequest.builder()
+                            .requesterEmail("Etest1@")
+                            .professorEmail("Etest2@")
+                            .explanation("Etestexplanation")
+                            .dateRequested(ldt1)
+                            .dateNeeded(ldt1)
+                            .done(false)
+                            .build();
+
+            String requestBody = mapper.writeValueAsString(Ereq);
+
+            when(recommendationRequestRepository.findById(eq(57L))).thenReturn(Optional.of(Oreq));
+
+            
+            MvcResult response = mockMvc.perform(
+                            put("/api/recommendationrequest?id=57")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .characterEncoding("utf-8")
+                                            .content(requestBody)
+                                            .with(csrf()))
+                            .andExpect(status().isOk()).andReturn();
+
+        
+            verify(recommendationRequestRepository, times(1)).findById(57L);
+            verify(recommendationRequestRepository, times(1)).save(Ereq); // should be saved with correct user
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals(requestBody, responseString);
+
+        }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
+        
+        LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+        RecommendationRequest Ereq = RecommendationRequest.builder()
+                        .requesterEmail("test1@")
+                        .professorEmail("test2@")
+                        .explanation("testexplanation")
+                        .dateRequested(ldt1)
+                        .dateNeeded(ldt1)
+                        .done(false)
+                        .build();
+
+    
+
+        String requestBody = mapper.writeValueAsString(Ereq);
+
+        when(recommendationRequestRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+        MvcResult response = mockMvc.perform(
+                        put("/api/recommendationrequest?id=67")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .characterEncoding("utf-8")
+                                        .content(requestBody)
+                                        .with(csrf()))
+                        .andExpect(status().isNotFound()).andReturn();
+
+        // assert
+        verify(recommendationRequestRepository, times(1)).findById(67L);
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("RecommendationRequest with id 67 not found", json.get("message"));
+    }
+
 
 }
