@@ -60,15 +60,17 @@ public class RecommendationRequestController extends ApiController{
             throws JsonProcessingException {
         
         // Create a new RecommendationRequest object
-        RecommendationRequest request = new RecommendationRequest();
-    
-        // Set the parameters of the new RecommendationRequest object    
-        request.setRequesterEmail(requestorEmail);
-        request.setProfessorEmail(professorEmail);
-        request.setExplanation(explanation);
-        request.setDateRequested(dateRequested);
-        request.setDateNeeded(dateNeeded);
-        request.setDone(done);
+        RecommendationRequest request = RecommendationRequest.builder()
+                                        .requesterEmail(requestorEmail)
+                                        .professorEmail(professorEmail)
+                                        .explanation(explanation)
+                                        .dateRequested(dateRequested)
+                                        .dateNeeded(dateNeeded)
+                                        .done(done)
+                                        .build();
+        
+        
+        
 
         RecommendationRequest savedRequest = recommendationRequestRepository.save(request);
 
