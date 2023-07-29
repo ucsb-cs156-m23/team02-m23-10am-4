@@ -5,6 +5,7 @@ import edu.ucsb.cs156.example.testconfig.TestConfig;
 import lombok.With;
 import edu.ucsb.cs156.example.ControllerTestCase;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
+import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 
 import java.util.ArrayList;
@@ -57,6 +58,50 @@ public class RecomendationRequestControllerTests extends ControllerTestCase{
                         .andExpect(status().is(200)); // logged in users can get all
     }
 
+    @WithMockUser(roles = { "USER" })
+        @Test
+        public void logged_in_user_can_get_all_recomendationrequests() throws Exception {
+
+                // arrange
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+                LocalDateTime ldt2 = LocalDateTime.parse("2022-02-03T00:00:00");
+
+                RecommendationRequest req1 = RecommendationRequest.builder()
+                                .requesterEmail("test1@")
+                                .professorEmail("test2@")
+                                .explanation("testexplanation")
+                                .dateRequested(ldt1)
+                                .dateNeeded(ldt2)
+                                .done(false)
+                                .build();
+                RecommendationRequest req2 = RecommendationRequest.builder()
+                                .requesterEmail("test3@")
+                                .professorEmail("test4@")
+                                .explanation("testexplanation2")
+                                .dateRequested(ldt1)
+                                .dateNeeded(ldt2)
+                                .done(false)
+                                .build();
+
+
+
+                ArrayList<RecommendationRequest> reqs = new ArrayList<>();
+                reqs.addAll(Arrays.asList(req1, req2));
+
+                when(recommendationRequestRepository.findAll()).thenReturn(reqs);
+
+                // act
+                MvcResult response = mockMvc.perform(get("/api/recommendationrequest/all"))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+
+                verify(recommendationRequestRepository, times(1)).findAll();
+                String expectedJson = mapper.writeValueAsString(reqs);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
+
     // Tests for POST
 
     @Test
@@ -74,7 +119,7 @@ public class RecomendationRequestControllerTests extends ControllerTestCase{
 
     @WithMockUser(roles = { "ADMIN", "USER" })
     @Test
-    public void an_admin_user_can_post_a_new_ucsbdate() throws Exception {
+    public void an_admin_user_can_post_a_new_recomendationrequest() throws Exception {
         
         LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
         LocalDateTime ldt2 = LocalDateTime.parse("2022-02-03T00:00:00");
