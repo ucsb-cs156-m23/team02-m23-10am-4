@@ -107,7 +107,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
 
         UCSBDiningCommonsMenuItem uCSBDiningCommonsMenuItem1 = UCSBDiningCommonsMenuItem.builder()
-            .dinningCommonsCode("Carrillo")
+            .diningCommonsCode("Carrillo")
             .name("Pizza")
             .station("PizzaStation")
             .build();
@@ -137,20 +137,20 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
         verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq(1L));
         Map<String, Object> json = responseToJson(response);
         assertEquals("EntityNotFoundException", json.get("type"));
-        assertEquals("MenuItemReview with id 1 not found", json.get("message"));
+        assertEquals("UCSBDiningCommonsMenuItem with id 1 not found", json.get("message"));
     }
 
     @WithMockUser(roles = {"USER"})
     @Test
     public void logged_in_user_can_get_all_articles() throws Exception {
         UCSBDiningCommonsMenuItem uCSBDiningCommonsMenuItem1 = UCSBDiningCommonsMenuItem.builder()
-            .dinningCommonsCode("Carrillo")
+            .diningCommonsCode("Carrillo")
             .name("Pizza")
             .station("PizzaStation")
             .build();
 
         UCSBDiningCommonsMenuItem uCSBDiningCommonsMenuItem2 = UCSBDiningCommonsMenuItem.builder()
-        .dinningCommonsCode("Ortega")
+        .diningCommonsCode("Ortega")
         .name("Lasagna")
         .station("LasagnaStation")
         .build();
@@ -174,14 +174,14 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     @Test
     public void an_admin_user_can_post_a_new_item() throws Exception {
         UCSBDiningCommonsMenuItem uCSBDiningCommonsMenuItem1 = UCSBDiningCommonsMenuItem.builder()
-            .dinningCommonsCode("Carrillo")
+            .diningCommonsCode("Carrillo")
             .name("Pizza")
             .station("PizzaStation")
             .build();
         
-        when(ucsbDiningCommonsMenuItemRepository.save(any(UCSBDiningCommonsMenuItem.class))).thenReturn(UCSBDiningCommonsMenuItem1);
+        when(ucsbDiningCommonsMenuItemRepository.save(any(UCSBDiningCommonsMenuItem.class))).thenReturn(uCSBDiningCommonsMenuItem1);
 
-        MvcResult response = mockMvc.perform(post("/api/UCSBDiningCommonsMenuItem/post?dinningCommonsCode=Carrillo&name=Pizza&station=PizzaStation").with(csrf())).andExpect(status().isOk()).andReturn();
+        MvcResult response = mockMvc.perform(post("/api/UCSBDiningCommonsMenuItem/post?diningCommonsCode=Carrillo&name=Pizza&station=PizzaStation").with(csrf())).andExpect(status().isOk()).andReturn();
 
         verify(ucsbDiningCommonsMenuItemRepository, times(1)).save(uCSBDiningCommonsMenuItem1);
         String expectedJSON = mapper.writeValueAsString(uCSBDiningCommonsMenuItem1);
@@ -193,13 +193,13 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     @Test
     public void admin_can_edit_an_existing_item() throws Exception{
         UCSBDiningCommonsMenuItem uCSBDiningCommonsMenuItem1 = UCSBDiningCommonsMenuItem.builder()
-            .dinningCommonsCode("Carrillo")
+            .diningCommonsCode("Carrillo")
             .name("Pizza")
             .station("PizzaStation")
             .build();
 
         UCSBDiningCommonsMenuItem uCSBDiningCommonsMenuItem2 = UCSBDiningCommonsMenuItem.builder()
-        .dinningCommonsCode("Ortega")
+        .diningCommonsCode("Ortega")
         .name("Lasagna")
         .station("LasagnaStation")
         .build();
@@ -226,7 +226,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     @Test
     public void admin_cannot_edit_item_that_does_not_exist() throws Exception {
         UCSBDiningCommonsMenuItem uCSBDiningCommonsMenuItem1 = UCSBDiningCommonsMenuItem.builder()
-            .dinningCommonsCode("Carrillo")
+            .diningCommonsCode("Carrillo")
             .name("Pizza")
             .station("PizzaStation")
             .build();
@@ -252,7 +252,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     @Test
     public void admin_can_delete_a_item() throws Exception{
         UCSBDiningCommonsMenuItem uCSBDiningCommonsMenuItem1 = UCSBDiningCommonsMenuItem.builder()
-            .dinningCommonsCode("Carrillo")
+            .diningCommonsCode("Carrillo")
             .name("Pizza")
             .station("PizzaStation")
             .build();
