@@ -223,7 +223,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
         MenuItemReview menuItemReviewEdited = MenuItemReview.builder()
             .itemId(2L)
             .reviewerEmail("test2@ucsb.edu")
-            .stars(5)
+            .stars(4)
             .dateReviewed(ldt2)
             .comments("This is a test comment 2")
             .build();
